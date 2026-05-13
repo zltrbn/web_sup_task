@@ -3,25 +3,24 @@ const express = require('express');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.get('/080526', (req, res) => {
+app.get('/login', (req, res) => {
     res.type('text/plain');
     res.send('zltrbns');
 });
 
-app.get('/add/:x1/:x2', (req, res) => {
-    const x1 = Number(req.params.x1);
-    const x2 = Number(req.params.x2);
+app.get('/id/:N', async (req, res) => {
+    try {
+        const { N } = req.params;
 
-    res.type('text/plain');
-    res.send(String(x1 + x2));
-});
+        const response = await fetch(`https://nd.kodaktor.ru/users/${N}`);
 
-app.get('/mpy/:y1/:y2', (req, res) => {
-    const y1 = Number(req.params.y1);
-    const y2 = Number(req.params.y2);
+        const data = await response.json();
 
-    res.type('text/plain');
-    res.send(String(y1 * y2));
+        res.type('text/plain');
+        res.send(data.login);
+    } catch (error) {
+        res.status(500).send('Error');
+    }
 });
 
 app.listen(PORT, () => {
