@@ -17,9 +17,17 @@ app.get("/login", (req, res) => {
 app.post("/zipper", upload.any(), (req, res) => {
 
     if (!req.files || req.files.length === 0) {
-        console.log(req.body);
-        console.log(req.files);
-        return res.status(404).end();
+        const errorDetails = {
+            message: 'No files uploaded',
+            body: req.body,
+            files: req.files || 'undefined',
+            contentType: req.headers['content-type']
+        };
+
+        return res.status(404).json({
+            error: 'No files uploaded',
+            details: errorDetails
+        });
     }
 
     const original = req.files[0].buffer;
