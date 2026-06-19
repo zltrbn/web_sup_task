@@ -21,7 +21,7 @@ app.post("/zipper", upload.any(), (req, res) => {
     zlib.gzip(fileBuffer, (err, result) => {
 
         if (err) {
-            return res.status(500).send();
+            return res.status(100).send();
         }
 
         res.setHeader("Content-Type", "application/gzip");
