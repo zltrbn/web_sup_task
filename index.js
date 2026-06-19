@@ -16,25 +16,10 @@ app.get("/login", (req, res) => {
 
 app.post("/zipper", upload.any(), (req, res) => {
 
-    if (!req.files || req.files.length === 0) {
-        return res.status(404).end();
-    }
+    console.log(req.body);
+    console.log(req.files);
 
-    const original = req.files[0].buffer;
-
-    zlib.gzip(original, (err, compressed) => {
-
-        if (err) {
-            return res.status(500).end();
-        }
-
-        res.writeHead(200, {
-            "Content-Type": "application/octet-stream",
-            "Content-Length": compressed.length
-        });
-
-        res.end(compressed);
-    });
+    res.send("ok");
 
 });
 
