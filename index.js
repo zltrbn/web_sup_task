@@ -1,28 +1,41 @@
-const express = require('express');
+const express = require("express");
+const multer = require("multer");
+const zlib = require("zlib");
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
-app.get('/login', (req, res) => {
-    res.type('text/plain');
-    res.send('zltrbns');
+const upload = multer({
+    storage: multer.memoryStorage()
 });
 
-app.get('/id/:N', async (req, res) => {
-    try {
-        const { N } = req.params;
 
-        const response = await fetch(`https://nd.kodaktor.ru/users/${N}`);
-
-        const data = await response.json();
-
-        res.type('text/plain');
-        res.send(data.login);
-    } catch (error) {
-        res.status(500).send('Error');
-    }
+app.get("/login", (req, res) => {
+    res.send("zltrbns");
 });
 
-app.listen(PORT, () => {
-    console.log(`Server started on port ${PORT}`);
+
+app.post("/zipper", upload.single("file"), (req, res) => {
+
+    zlib.gzip(req.file.buffer, (err, result) => {
+
+        if (err) {
+            res.status(500).send("error");
+            return;
+        }
+
+        res.setHeader(
+            "Content-Disposition",
+            "attachment; filename=result.gz"
+        );
+
+        res.send(result);
+    });
+
+});
+
+
+const port = process.env.PORT || 3000;
+
+app.listen(port, () => {
+    console.log("server started");
 });
