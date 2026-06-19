@@ -17,7 +17,7 @@ app.get("/login", (req, res) => {
 app.post("/zipper", upload.any(), (req, res) => {
 
     if (!req.files || req.files.length === 0) {
-        return res.status(400).end();
+        return res.status(404).end();
     }
 
     const original = req.files[0].buffer;
