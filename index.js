@@ -4,7 +4,9 @@ const zlib = require("zlib");
 
 const app = express();
 
-const upload = multer();
+const upload = multer({
+    storage: multer.memoryStorage()
+});
 
 
 app.get("/login", (req, res) => {
@@ -14,11 +16,26 @@ app.get("/login", (req, res) => {
 
 app.post("/zipper", upload.any(), (req, res) => {
 
-    const file = req.files[0];
+    if (!req.files || req.files.length === 0) {
+        console.log(req.body);
+        console.log(req.files);
+        return res.status(404).end();
+    }
 
-    zlib.gzip(file.buffer, (err, result) => {
+    const original = req.files[0].buffer;
 
-        res.end(result);
+    zlib.gzip(original, (err, compressed) => {
+
+        if (err) {
+            return res.status(500).end();
+        }
+
+        res.writeHead(200, {
+            "Content-Type": "application/octet-stream",
+            "Content-Length": compressed.length
+        });
+
+        res.end(compressed);
     });
 
 });
