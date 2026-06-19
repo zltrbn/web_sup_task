@@ -26,11 +26,11 @@ app.post("/zipper", upload.any(), (req, res) => {
             return res.status(500).send("gzip error");
         }
 
-        res.status(200);
-
-        res.setHeader("Content-Type", "application/gzip");
-        res.setHeader("Content-Length", result.length);
-        res.setHeader("Content-Disposition", "attachment; filename=result.gz");
+        res.writeHead(200, {
+            "Content-Type": "application/gzip",
+            "Content-Disposition": "attachment; filename=result.gz",
+            "Content-Length": result.length
+        });
 
         res.end(result);
     });
