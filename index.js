@@ -14,29 +14,32 @@ app.get("/login", (req, res) => {
 });
 
 
-app.post("/zipper", upload.single("file"), (req, res) => {
+app.post("/zipper", upload.any(), (req, res) => {
 
-    if (!req.file) {
-        return res.status(400).send("File not found");
+    console.log(req.files);
+
+    if (!req.files || req.files.length === 0) {
+        return res.status(400).send("No file");
     }
 
-    zlib.gzip(req.file.buffer, (err, compressed) => {
+
+    const file = req.files[0].buffer;
+
+
+    zlib.gzip(file, (err, result) => {
 
         if (err) {
-            return res.status(500).send("Compression error");
+            return res.status(500).send("gzip error");
         }
 
-        res.setHeader(
-            "Content-Type",
-            "application/gzip"
-        );
 
-        res.setHeader(
-            "Content-Disposition",
-            "attachment; filename=result.gz"
-        );
+        res.writeHead(200, {
+            "Content-Type": "application/gzip",
+            "Content-Disposition": "attachment; filename=result.gz"
+        });
 
-        res.end(compressed);
+
+        res.end(result);
     });
 
 });
@@ -45,5 +48,5 @@ app.post("/zipper", upload.single("file"), (req, res) => {
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    console.log(`Server started ${PORT}`);
 });
